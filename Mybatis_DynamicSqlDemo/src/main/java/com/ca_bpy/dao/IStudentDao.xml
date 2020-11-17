@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--sql映射文件-->
+<mapper namespace="com.ca_bpy.dao.IStudentDao">
+    <!--select 查询操作-->
+    <!--sql标签定义代码片段-->
+    <sql id="studentSelect">
+        select id,name,email,age from student
+    </sql>
+    <!--selectObject 使用对象进行多个参数查询操作-->
+    <!--动态SQL 使用<if>标签-->
+    <select id="selectStudentsObjectIf" resultType="com.ca_bpy.domain.Student">
+        <include refid="studentSelect"/>
+        where 1=1
+        <if test="name != null and name !=''  ">
+            and name=#{name}
+        </if>
+        <if test="age > 0">
+            or age > #{age}
+        </if>
+    </select>
+
+    <!--动态SQL 使用<where>标签-->
+    <select id="selectStudentsObjectWhere" resultType="com.ca_bpy.domain.Student">
+        <include refid="studentSelect"/>
+        <where>
+            <if test="name != null and name !='' ">
+                name=#{name}
+            </if>
+            <if test="age > 0">
+                age > #{age}
+            </if>
+        </where>
+    </select>
+
+    <!--动态SQL 使用<foreach>标签-->
+    <select id="selectStudentsObjectForeach" resultType="com.ca_bpy.domain.Student">
+        <include refid="studentSelect"/>
+        <if test="list !=null and list.size > 0">
+            where id in
+            <foreach collection="list" open="(" close=")" item="stu" separator=",">
+                #{stu.id}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>
